@@ -15,6 +15,11 @@ sed 's/#LogLevel=info/LogLevel=notice/' /etc/systemd/system.conf | sudo tee /etc
 
 
 #### Download and Install the Latest Updates for the OS
+export DEBIAN_FRONTEND=noninteractive
+apt-get update && 
+apt-get -o Dpkg::Options::="--force-confold" upgrade -q -y --force-yes
+
+#apt-get -o Dpkg::Options::="--force-confold" dist-upgrade -q -y --force-yes
 sudo apt update && sudo apt -y full-upgrade
 
 #### install mysql in noninteractive

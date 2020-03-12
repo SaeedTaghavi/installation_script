@@ -1,0 +1,76 @@
+write OS image to memory
+
+set OS:
+    sudo npi-config
+    1- set boot     => Autologin
+    2- set HostName => lotex_modem
+    3- set TimZzone => Asia->Tehran
+    4- in Advanced option check I2C, SPI, Serial enabled
+
+change setting clock log:
+    sudo nano /etc/systemd/system.conf
+    #LogLevel=info   =>   LogLevel=notice
+
+update OS:
+    sudo apt update
+    sudo apt -y full-upgrade
+
+install mysql-server: pass:YOURPASS
+    sudo apt install -y mysql-server
+
+* you can import database from phpmyadmin:
+    install phpmyadmin: pass:YOURPASS
+    sudo apt install -y phpmyadmin
+    some configuration for phpmyadmin:
+            sudo nano /etc/apache2/apache2.conf
+        Include the following line at the bottom of the file, save and quit:
+            Include /etc/phpmyadmin/apache.conf
+        restart apache2:
+           sudo  /etc/init.d/apache2 restart
+    
+    import YOURDATABASE to the modem
+    
+* Or you can import database from terminal:
+import a database from file:
+    1- crearte new databse
+        $ mysql -u root -p
+        mysql> create database YOURDATABASE;
+        mysql> quit;
+    
+    2- import the database from file:
+        $ mysql -u root -p YOURDATABASE < YOURDATABASE_FILE.sql
+    
+    3- to checkthe database:
+        $ mysql -u root -p
+        mysql> show databases;
+        mysql> use YOURDATABASE;
+        mysql> show tables;
+
+install mysql-client:
+    sudo apt install -y libmysqlclient-dev
+
+install ssl:
+    sudo apt-get install -y libssl-dev
+
+install WiringNP:
+    sudo git clone https://github.com/friendlyarm/WiringNP ~/WiringNP  
+    sudo chmod 755 ~/WiringNP/build
+    cd ~/WiringNP
+    sudo ./build   
+    gpio readall
+
+copy to crontab:
+    sudo crontab -e
+@reboot /home/fa/start.sh >> /home/fa/cron_log_b.txt 2>&1
+*/5 * * * * /home/fa/start.sh >> /home/fa/cron_log_m.txt 2>&1
+
+install g++ compiler:
+    sudo apt -y install g++
+
+
+sudo rm -rf WiringNP/
+    
+    
+connect to serial port in linux with putty:
+    sudo putty /dev/ttyS0 -serial -sercfg 115200,8,n,1,N &
+
